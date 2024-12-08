@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confession Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .admin-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .admin-button:hover {
+            background-color: #0056b3;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        form input, form textarea, form button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background: #0056b3;
+        }
+        #exportExcel {
+            display: none; /* Hide export button by default */
+        }
+    </style>
+</head>
+<body>
+    <button class="admin-button" onclick="authenticateUser()">Admin Options</button>
+
+    <h1>Confession Page</h1>
+    <form id="confessionForm">
+        <input type="text" id="toWhom" placeholder="To whom you are confessing" required>
+        <textarea id="confessionText" rows="5" placeholder="Enter your confession" required></textarea>
+        <button type="button" onclick="addConfession()">Submit Confession</button>
+    </form>
+
+    <button id="exportExcel" onclick="exportToExcel()">Export to Excel</button>
+
+    <script>
+        // Array to hold confession entries
+        const confessions = [];
+
+        // Add confession to the array
+        function addConfession() {
+            const toWhom = document.getElementById('toWhom').value.trim();
+            const confessionText = document.getElementById('confessionText').value.trim();
+
+            if (toWhom && confessionText) {
+                confessions.push({ "To Whom": toWhom, Confession: confessionText });
+
+                // Clear the form inputs
+                document.getElementById('confessionForm').reset();
+
+                alert('Confession added successfully!');
+            } else {
+                alert('Please fill in both fields.');
+            }
+        }
+
+        // Export confessions to an Excel file
+        function exportToExcel() {
+            if (confessions.length === 0) {
+                alert('No confessions to export!');
+                return;
+            }
+
+            const worksheet = XLSX.utils.json_to_sheet(confessions); // Convert data to a worksheet
+            const workbook = XLSX.utils.book_new(); // Create a new workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Confessions'); // Append the worksheet
+            XLSX.writeFile(workbook, 'Confessions.xlsx'); // Export to an Excel file
+        }
+
+        // Authentication for Export Button Visibility
+        function authenticateUser() {
+            const password = prompt('Enter the admin password:');
+            if (password === 'admin123') { // Replace 'admin123' with your desired password
+                document.getElementById('exportExcel').style.display = 'block'; // Show the export button
+                alert('Authentication successful. Export button is now visible.');
+            } else {
+                alert('Incorrect password. Access denied.');
+            }
+        }
+    </script>
+</body>
+</html>
